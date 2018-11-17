@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>Analisador Sintático</title>
+  <title>treehugger.js demo</title>
   <script data-main="lib/demo" src="lib/require.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
@@ -48,9 +48,14 @@ console.log(a, b, c);</textarea></td>
         <h3 style="margin-left: 15px; justify-content: end">Terminal</h3> <button class="btn btn-button" style="display: absolute; width: 200px; margin-left: 75%; margin-bottom: 5px;"
           id="runbutton" onclick="terminal(true)"><i class="fa fa-play" style="margin-right: 15px"></i>Executar</button>
         <div style="position: absolute; right: 25px;">
-          <button class="btn btn-primary" onclick="exemplo(1)"><i class="fas fa-stream" style="margin-right: 15px"></i>Ex. 01</button>
-          <button class="btn btn-primary" onclick="exemplo(2)"><i class="fas fa-stream" style="margin-right: 15px"></i>Ex. 02</button>
-          <button class="btn btn-primary" onclick="exemplo(3)"><i class="fas fa-stream" style="margin-right: 15px"></i>Ex. 03</button>
+          <button class="btn btn-primary" onclick="exemplo(1)"><i class="fas fa-stream" style="margin-right: 15px"></i>Ex.
+            01</button>
+          <button class="btn btn-primary" onclick="exemplo(2)"><i class="fas fa-stream" style="margin-right: 15px"></i>Ex.
+            02</button>
+          <button class="btn btn-primary" onclick="exemplo(3)"><i class="fas fa-stream" style="margin-right: 15px"></i>Ex.
+            03</button>
+          <button class="btn btn-primary" onclick="exemplo(4)"><i class="fas fa-stream" style="margin-right: 15px"></i>Ex.
+            04</button>
         </div>
       </th>
       <th></th>
@@ -68,6 +73,7 @@ ast.traverseTopDown(
    'Var(x)', function(b) {
       if(!declared[b.x.value])
         log("Erro próximo de '" + b.x.value + "', caracter não esperado na linha: "+b.x.$pos.start.line+" coluna: "+b.x.$pos.start.column+".");
+        
    }
 );
 </textarea></td>
@@ -91,31 +97,75 @@ ast.traverseTopDown(
       out.value = 'Código sem erros...';
       out.style.fontSize = '15px';
     }
-  }, 1000)
+  }, 500)
 
   function terminal(show) {
     show ? document.getElementById('output').style.display = "block" : document.getElementById('output').style.display = "none";
+
+    setTimeout(function () { searchError() }, 500)
+  }
+  function searchError() {
+    var code = document.getElementById('code');
+
+    var text = code.value.split('')
+    var len = text.length
+    var open = text.filter(function (e) { return e === '(' })
+    var close = text.filter(function (e) { return e === ')' })
+
+    if (open.length !== close.length) {
+      var out = document.getElementById('output');
+      console.log(out)
+      text = text.join('').split('\n')
+      var line = text.length
+      var col = text[line - 1].length
+      if ($("#output").val() !== 'Código sem erros...')
+        $("#output").val($("#output").val() + "Erro, parêntese não encontrado na linha: " + line + " coluna: " + col + "")
+      else
+        $("#output").val("Erro, parntese não encontrado na linha: " + line + " coluna: " + col + "")
+    }
+
+
+    open = text.filter(function (e) { return e === '\"' })
+    console.log(open)
+    if (open.length % 2 !== 0 && open.length > 0) {
+      var out = document.getElementById('output');
+      console.log(out)
+      text = text.join('').split('\n')
+      var line = text.length
+      var col = text[line - 1].length
+      if ($("#output").val() !== 'Código sem erros...')
+        $("#output").val($("#output").val() + "Erro, aspas não encontrado na linha: " + line + " coluna: " + col + "")
+      else
+        $("#output").val("Erro, aspas não encontrado na linha: " + line + " coluna: " + col + "")
+    }
   }
 
   function exemplo(ex) {
+
     var code = document.getElementById('code');
     switch (ex) {
       case 1: {
-        code.value = 
-        `var nome = prompt('qual seu nome?');\nalert('Olá '+nome+', seja bem vindo')`;
+        code.value =
+          `var nome = prompt('qual seu nome?');\nalert('Olá '+nome+', seja bem vindo')`;
         break;
       }
-      case 2:{
-        code.value = 
-        `var a = 10, b = 50, c = a+b;`;
+      case 2: {
+        code.value =
+          `var a = 10, b = 50, c = a+b;`;
         break;
       }
-      case 3:{
-        code.value = 
-        `var a = 10\nvar b = 5\nfunction(a,b){\nvar c = a + b\nreturn d\n}`;
+      case 3: {
+        code.value =
+          `var a = 10\nvar b = 5\nfunction(a,b){\nvar c = a + b\nreturn d\n}`;
+        break;
+      }
+      case 4: {
+        code.value =
+          `var a = 'olá mundo'\nfunction(a){\nreturn alert("\n//adcione o 'parênteses' e a "aspas" e reexecute \n}`;
         break;
       }
     }
+
   }
 
 </script>
